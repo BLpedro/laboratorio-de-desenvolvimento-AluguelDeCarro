@@ -4,3 +4,88 @@
 <script src="script.js"></script>
 </html>
 
+<style>
+/* ======= ESTILO GLOBAL ======= */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f6fa;
+  margin: 20px;
+  color: #333;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2f3640;
+}
+
+/* ======= TABELA ======= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+thead {
+  background: #2f3640;
+  color: #fff;
+}
+
+thead th {
+  padding: 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+}
+
+tbody tr:hover {
+  background: #f0f0f0;
+}
+
+/* ======= BOTÕES ======= */
+button {
+  border: none;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+/* Botão Aceitar */
+button[onclick*="aceito"] {
+  background: #4cd137;
+  color: white;
+  margin-right: 5px;
+}
+
+/* Botão Recusar */
+button[onclick*="recusado"] {
+  background: #e84118;
+  color: white;
+}
+
+/* Mensagem de erro ou vazio */
+#listaPendentes p,
+#listaPendentesAgente p {
+  text-align: center;
+  font-size: 16px;
+  margin-top: 15px;
+  color: #555;
+}
+
+</style>

@@ -278,6 +278,7 @@ async function pendentesUsuario() {
     listaDiv.innerHTML = "<span style='color:red'>Erro ao carregar aluguéis.</span>";
   }
 }
+
 pendentesUsuario()
 
 async function pendentesAgente() {
@@ -292,9 +293,8 @@ async function pendentesAgente() {
     }
 
     const alugueis = await response.json();
-    console.log("Todos os aluguéis:", alugueis);
 
-    // filtra apenas os do agente logado
+    // pega apenas os do agente logado
     const alugueisAgente = alugueis.filter(aluguel => aluguel.agenteID == agenteID);
 
     listaDiv.innerHTML = "";
@@ -304,32 +304,49 @@ async function pendentesAgente() {
       return;
     }
 
-    // cria tabela
     let tabelaHtml = `
       <table border="1">
         <thead>
           <tr>
             <th>ID Aluguel</th>
-            <th>Cliente</th>
+            <th>Nome Cliente</th>
+            <th>CPF/CNPJ</th>
+            <th>Profissão</th>
+            <th>Rendimento</th>
             <th>Automóvel</th>
             <th>Duração (dias)</th>
             <th>Status</th>
+            <th>Ações</th>
           </tr>
         </thead>
         <tbody>
     `;
 
-    alugueisAgente.forEach(aluguel => {
-      tabelaHtml += `
-        <tr>
-          <td>${aluguel.id}</td>
-          <td>${aluguel.clienteID}</td>
-          <td>${aluguel.automovelID}</td>
-          <td>${aluguel.quantidadeDias}</td>
-          <td>${aluguel.statusPedido}</td>
-        </tr>
-      `;
-    });
+    for (const aluguel of alugueisAgente) {
+      try {
+        const clienteResp = await fetch(`http://localhost:8080/usuarios/${aluguel.clienteID}`);
+        const cliente = await clienteResp.json();
+
+        tabelaHtml += `
+          <tr>
+            <td>${aluguel.id}</td>
+            <td>${cliente.nome}</td>
+            <td>${cliente.cnpjCpf}</td>
+            <td>${cliente.profissao}</td>
+            <td>${cliente.somaRendimento}</td>
+            <td>${aluguel.automovelID}</td>
+            <td>${aluguel.quantidadeDias}</td>
+            <td>${aluguel.statusPedido}</td>
+            <td>
+              <button onclick="atualizarStatusAluguel(${aluguel.id}, 'aceito')">Aceitar</button>
+              <button onclick="atualizarStatusAluguel(${aluguel.id}, 'recusado')">Recusar</button>
+            </td>
+          </tr>
+        `;
+      } catch (e) {
+        console.error("Erro ao buscar cliente:", e);
+      }
+    }
 
     tabelaHtml += "</tbody></table>";
     listaDiv.innerHTML = tabelaHtml;
@@ -339,4 +356,37 @@ async function pendentesAgente() {
     listaDiv.innerHTML = "<span style='color:red'>Erro ao carregar aluguéis do agente.</span>";
   }
 }
+
+
+// Função para aceitar/recusar aluguel
+async function atualizarStatusAluguel(idAluguel, novoStatus) {
+  try {
+    // busca os dados completos do aluguel
+    const resp = await fetch(`http://localhost:8080/alugueis/${idAluguel}`);
+    if (!resp.ok) throw new Error("Erro ao buscar aluguel");
+    const aluguel = await resp.json();
+
+    // altera só o status
+    aluguel.statusPedido = novoStatus;
+
+    // envia de volta com PUT
+    const updateResp = await fetch(`http://localhost:8080/alugueis/${idAluguel}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(aluguel)
+    });
+
+    if (!updateResp.ok) throw new Error("Erro ao atualizar aluguel");
+
+    const data = await updateResp.json();
+    alert(`Aluguel ${idAluguel} foi ${novoStatus}!`);
+    pendentesAgente(); // recarrega a lista
+  } catch (error) {
+    console.error("Erro ao atualizar status:", error);
+    alert("Erro ao atualizar aluguel: " + error.message);
+  }
+}
+
 pendentesAgente()
