@@ -147,7 +147,7 @@ const linha = document.createElement("tr");
         <td>${automovel.modelo}</td>
         <td>${automovel.placa}</td>
         <td data-label="Ações">
-        <button>Alugar</button>
+        <button onclick="alugarAutomovel(${automovel.id})">Alugar</button>
       </td>
       `;
 
@@ -159,3 +159,184 @@ const linha = document.createElement("tr");
   }
 }
 popularListaAutomoveis();
+
+
+function alugarAutomovel(id) {
+  // cria o HTML do formulário
+  const formHtml = `
+    <h3>Formulário de Aluguel - Automóvel ${id}</h3>
+    <form onsubmit="enviarFormulario(${id}); return false;">
+
+      <label for="nome">Id do Agente:</label><br>
+      <input type="number" id="nome" name="nome" required><br><br>
+
+      <label for="duracao">Duração do empréstimo em dias:</label><br>
+      <input type="number" id="duracao" name="duracao" required><br><br>
+
+      <button onclick="postAluguel(${id})" type="submit">Confirmar Aluguel</button>
+    </form>
+  `;
+
+  // insere o formulário na div
+  document.getElementById("formulario").innerHTML = formHtml;
+}
+
+
+function postAluguel(id) {
+  event.preventDefault();
+  const idAutomovel = id;
+  const idAgente = document.getElementById("nome").value;
+  const duracao = document.getElementById("duracao").value;
+  const clienteID = localStorage.getItem("id"); // pega do login
+
+  fetch("http://localhost:8080/alugueis", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      clienteID: clienteID,
+      automovelID: idAutomovel,  // cuidado: JSON é case-sensitive
+      agenteID: idAgente,
+      quantidadeDias: duracao,
+      statusPedido: "pendente"
+    })
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Erro ao alugar automóvel");
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log("Aluguel realizado com sucesso", data);
+    alert("Aluguel realizado com sucesso!");
+  })
+  .catch(error => {
+    console.error("Erro ao realizar aluguel:", error);
+    alert("Erro ao realizar aluguel: " + error.message);
+  });
+}
+
+
+async function pendentesUsuario() {
+  const clienteID = localStorage.getItem("id");
+  const listaDiv = document.getElementById("listaPendentes");
+  if (!listaDiv) return;
+
+  try {
+    const response = await fetch("http://localhost:8080/alugueis", { mode: "cors" });
+    if (!response.ok) {
+      throw new Error("Erro ao buscar aluguéis");
+    }
+
+    const alugueis = await response.json();
+    console.log("Todos os aluguéis:", alugueis);
+
+    // filtra apenas os do cliente logado
+    const alugueisCliente = alugueis.filter(aluguel => aluguel.clienteID == clienteID);
+
+    listaDiv.innerHTML = "";
+
+    if (alugueisCliente.length === 0) {
+      listaDiv.innerHTML = "<p>Nenhum aluguel encontrado para este usuário.</p>";
+      return;
+    }
+
+    // cria tabela
+    let tabelaHtml = `
+      <table border="1">
+        <thead>
+          <tr>
+            <th>ID Aluguel</th>
+            <th>Automóvel</th>
+            <th>Agente</th>
+            <th>Duração (dias)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    alugueisCliente.forEach(aluguel => {
+      tabelaHtml += `
+        <tr>
+          <td>${aluguel.id}</td>
+          <td>${aluguel.automovelID}</td>
+          <td>${aluguel.agenteID}</td>
+          <td>${aluguel.quantidadeDias}</td>
+          <td>${aluguel.statusPedido}</td>
+        </tr>
+      `;
+    });
+
+    tabelaHtml += "</tbody></table>";
+    listaDiv.innerHTML = tabelaHtml;
+
+  } catch (error) {
+    console.error("Erro ao carregar aluguéis:", error);
+    listaDiv.innerHTML = "<span style='color:red'>Erro ao carregar aluguéis.</span>";
+  }
+}
+pendentesUsuario()
+
+async function pendentesAgente() {
+  const agenteID = localStorage.getItem("id");
+  const listaDiv = document.getElementById("listaPendentesAgente");
+  if (!listaDiv) return;
+
+  try {
+    const response = await fetch("http://localhost:8080/alugueis", { mode: "cors" });
+    if (!response.ok) {
+      throw new Error("Erro ao buscar aluguéis");
+    }
+
+    const alugueis = await response.json();
+    console.log("Todos os aluguéis:", alugueis);
+
+    // filtra apenas os do agente logado
+    const alugueisAgente = alugueis.filter(aluguel => aluguel.agenteID == agenteID);
+
+    listaDiv.innerHTML = "";
+
+    if (alugueisAgente.length === 0) {
+      listaDiv.innerHTML = "<p>Nenhum aluguel encontrado para este agente.</p>";
+      return;
+    }
+
+    // cria tabela
+    let tabelaHtml = `
+      <table border="1">
+        <thead>
+          <tr>
+            <th>ID Aluguel</th>
+            <th>Cliente</th>
+            <th>Automóvel</th>
+            <th>Duração (dias)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    alugueisAgente.forEach(aluguel => {
+      tabelaHtml += `
+        <tr>
+          <td>${aluguel.id}</td>
+          <td>${aluguel.clienteID}</td>
+          <td>${aluguel.automovelID}</td>
+          <td>${aluguel.quantidadeDias}</td>
+          <td>${aluguel.statusPedido}</td>
+        </tr>
+      `;
+    });
+
+    tabelaHtml += "</tbody></table>";
+    listaDiv.innerHTML = tabelaHtml;
+
+  } catch (error) {
+    console.error("Erro ao carregar aluguéis do agente:", error);
+    listaDiv.innerHTML = "<span style='color:red'>Erro ao carregar aluguéis do agente.</span>";
+  }
+}
+pendentesAgente()
