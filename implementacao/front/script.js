@@ -390,3 +390,73 @@ async function atualizarStatusAluguel(idAluguel, novoStatus) {
 }
 
 pendentesAgente()
+
+
+// PATCH - Atualizar usuário
+function atualizarUsuario() {
+    event.preventDefault();
+    const id = localStorage.getItem("id");
+    if (!id) {
+        alert("Nenhum usuário logado/cadastrado!");
+        return;
+    }
+
+    const nome = document.getElementById("nome").value;
+    const endereco = document.getElementById("endereco").value;
+    const profissao = document.getElementById("profissao").value;
+
+    fetch(`http://localhost:8080/usuarios/${id}`, {
+        method: "PUT",
+        mode: "cors",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+             nome: nome,
+            cnpjCpf: cpf,
+            senha: senha,
+            rg: rg,
+            endereco: endereco,
+            profissao: profissao,
+            somaRendimento: rendimento,
+            selecao: selecao,
+            tipo: tipo
+        })
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Erro ao atualizar");
+        return response.json();
+    })
+    .then(data => {
+        console.log("Usuário atualizado:", data);
+        alert("Usuário atualizado com sucesso!");
+    })
+    .catch(error => console.error("Erro no PATCH:", error));
+}
+
+// GET - Ler dados do usuário
+
+// DELETE - Excluir usuário
+function deletarUsuario() {
+    const id = localStorage.getItem("id");
+    if (!id) {
+        alert("Nenhum usuário logado/cadastrado!");
+        return;
+    }
+
+    if (!confirm("Tem certeza que deseja excluir o usuário?")) return;
+
+    fetch(`http://localhost:8080/usuarios/${id}`, {
+        method: "DELETE",
+        mode: "cors"
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Erro ao deletar");
+        console.log("Usuário deletado");
+        localStorage.removeItem("id"); // remove do localStorage
+        alert("Usuário deletado com sucesso!");
+    })
+    .catch(error => console.error("Erro no DELETE:", error));
+}
+
+
