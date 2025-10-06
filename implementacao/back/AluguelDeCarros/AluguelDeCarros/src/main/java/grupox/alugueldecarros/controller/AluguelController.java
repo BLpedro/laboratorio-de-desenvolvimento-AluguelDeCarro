@@ -14,46 +14,45 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import grupox.alugueldecarros.entity.Automovel;
-import grupox.alugueldecarros.service.AutomovelService;
+import grupox.alugueldecarros.entity.Aluguel;
+import grupox.alugueldecarros.service.AluguelService;
 
 
 @RestController
-@RequestMapping("/automoveis")
-public class AutomovelController {
-    
-    @Autowired
-    private AutomovelService automovelService;
+@RequestMapping("/alugueis")
+public class AluguelController {
 
-    
+    @Autowired
+    private AluguelService aluguelService;
+
     @GetMapping
-public List<Automovel> getAllAutomoveis() {
-    return automovelService.getAllAutomoveis();
-}
+    public List<Aluguel> getAllAlugueis() {
+        return aluguelService.getAllAlugueis();
+    }
 
 
     @GetMapping("/{id}")
-    public Automovel getAutomovelById(@PathVariable Long id) {
+    public Aluguel getAluguelById(@PathVariable Long id) {
         try {
-            return automovelService.getAutomovelById(id);
+            return aluguelService.getAluguelById(id);
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
     @PostMapping
-    public Automovel createAutomovel(@RequestBody Automovel automovel) {
-        return automovelService.createAutomovel(automovel);
+    public Aluguel createAluguel(@RequestBody Aluguel aluguel) {
+        return aluguelService.createAluguel(aluguel);
     }
 
     @PutMapping("/{id}")
-    public Automovel updateAutomovel(@PathVariable Long id, @RequestBody Automovel automovel) {
-        automovel.setId(id);
-        return automovelService.updateAutomovel(id, automovel);
+    public Aluguel updateAluguel(@PathVariable Long id, @RequestBody Aluguel aluguel) {
+        aluguel.setId(id);
+        return aluguelService.updateAluguel(id, aluguel);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAutomovel(@PathVariable Long id) {
-        automovelService.deleteAutomovel(id);
+    public void deleteAluguel(@PathVariable Long id) {
+        aluguelService.deleteAluguel(id);
     }
 }

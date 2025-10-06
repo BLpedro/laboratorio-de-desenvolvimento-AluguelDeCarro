@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <table id="tabelaCarros">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ano</th>
+        <th>Marca</th>
+        <th>Modelo</th>
+        <th>Placa</th>
+        <th> Alugar </th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Linhas serão inseridas aqui pelo JavaScript -->
+    </tbody>
+    <div id="listaAutomoveis"></div>??
+</body>
+<script src="script.js"></script>
+</html>
+
+
+<style>
+    table {
+  border-collapse: collapse;
+  width: 90%;
+  margin: 30px auto;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Cabeçalho da tabela */
+thead {
+  background-color: #4CAF50;
+  color: white;
+  text-align: center;
+  font-size: 1rem;
+}
+
+/* Células do cabeçalho */
+thead th {
+  padding: 12px 15px;
+}
+
+/* Linhas do corpo da tabela */
+tbody tr {
+  background-color: #f9f9f9;
+  transition: background-color 0.3s;
+}
+
+/* Efeito hover nas linhas */
+tbody tr:hover {
+  background-color: #e0f7fa;
+}
+
+/* Células do corpo da tabela */
+tbody td {
+  padding: 10px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Última linha sem borda inferior */
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Responsividade */
+@media screen and (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+    width: 100%;
+  }
+  thead tr {
+    display: none; /* Oculta cabeçalho em telas pequenas */
+  }
+  tbody td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  } 
+  tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    text-align: left;
+    font-weight: bold;
+  }
+}
+
+
+/* Estilo geral */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f6f9;
+  margin: 20px;
+}
+
+/* Estilo da tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Botão de alugar */
+button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+/* Formulário */
+#formulario {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-width: 400px;
+}
+
+#formulario h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+#formulario label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+#formulario input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+#formulario button {
+  width: 100%;
+  background-color: #007bff;
+}
+
+#formulario button:hover {
+  background-color: #0056b3;
+}
+</style>
+
+<div id="formulario"></div>
